@@ -1,5 +1,3 @@
-console.log(firebase);
-
 const auth = firebase.auth();
 
 const whenSignedIn = document.getElementById("whenSignedIn");
@@ -25,5 +23,42 @@ auth.onAuthStateChanged((user) => {
     whenSignedIn.hidden = true;
     whenSignedOut.hidden = false;
     userDetails.innerHTML = "";
+  }
+});
+
+const db = firebase.firestore();
+
+const createThing = document.getElementById("createThing");
+const thingsList = document.getElementById("thingsList");
+
+let thingsRef;
+let unsubscribe;
+
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    thingsRef = db.collection("things");
+
+    createThing.onclick = () => {
+      const { serverTimestamp } = firebase.firestore.FieldValue;
+      const name = `RandomName${Math.floor(Math.random() * 1000)}`;
+
+      thingsRef.add({
+        uid: user.uid,
+        name: name,
+        createdAt: serverTimestamp(),
+      });
+    };
+
+    unsubscribe = thingsRef
+      .where("uid", "==", user.uid)
+      .orderBy("createdAt")
+      .onSnapshot((querySnapshot) => {
+        const items = querySnapshot.docs.map((doc) => {
+          return `<li>${doc.data().name}</li>`;
+        });
+        thingsList.innerHTML = items.join("");
+      });
+  } else {
+    unsubscribe && unsubscribe();
   }
 });

@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/sashalikesplanes/firebase-demo/issues"
   },
-  "homepage": "https://github.com/sashalikesplanes/firebase-demo#readme"
+  "homepage": "https://github.com/sashalikesplanes/firebase-demo#readme",
+  "devDependencies": {
+    "@faker-js/faker": "^6.3.1"
+  }
 }
